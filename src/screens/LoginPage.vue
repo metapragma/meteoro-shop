@@ -24,13 +24,25 @@ function handleLogout() {
 </script>
 
 <template>
-  <main style="padding: 24px">
-    <h1>Login</h1>
-    <p>Mock auth screen (will be replaced with spec UI).</p>
-    <div style="display: flex; gap: 12px; margin-top: 12px">
-      <button type="button" aria-label="Login" @click="handleLogin">Login</button>
-      <button type="button" aria-label="Logout" @click="handleLogout">
-        Logout
+  <main class="mx-auto max-w-md p-6">
+    <h1 class="text-2xl font-semibold">Вход</h1>
+    <p class="mt-2 text-sm text-slate-600">Мок-аутентификация.</p>
+    <div class="mt-4 flex gap-3">
+      <button
+        type="button"
+        aria-label="Войти"
+        class="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+        @click="handleLogin"
+      >
+        Войти
+      </button>
+      <button
+        type="button"
+        aria-label="Выйти"
+        class="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-100"
+        @click="handleLogout"
+      >
+        Выйти
       </button>
     </div>
   </main>
