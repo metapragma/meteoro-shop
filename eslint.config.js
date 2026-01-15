@@ -34,6 +34,16 @@ export default [
     },
   },
 
+  {
+    files: ['server/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+  },
+
   eslintConfigPrettier,
 
   {
