@@ -1,19 +1,13 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { clearSession, setSession } from '../features/auth/session'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const route = useRoute()
+const auth = useAuthStore()
 
 function handleLogin() {
-  setSession({
-    token: 'fake-jwt-token',
-    user: {
-      id: 'u_123',
-      nickname: 'User',
-      avatar: '/avatars/u1.png',
-    },
-  })
+  auth.loginMock()
 
   const next =
     typeof route.query.next === 'string' && route.query.next.length > 0
@@ -24,7 +18,7 @@ function handleLogin() {
 }
 
 function handleLogout() {
-  clearSession()
+  auth.logout()
   router.replace('/login')
 }
 </script>
@@ -41,4 +35,3 @@ function handleLogout() {
     </div>
   </main>
 </template>
-
