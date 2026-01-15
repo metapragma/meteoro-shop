@@ -47,4 +47,3 @@ export const useAuthStore = defineStore('auth', () => {
     refreshFromStorage,
   }
 })
-

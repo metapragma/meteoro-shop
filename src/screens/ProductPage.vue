@@ -9,4 +9,3 @@ defineProps<{ id: string }>()
     <p><strong>id:</strong> {{ id }}</p>
   </main>
 </template>
-
