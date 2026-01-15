@@ -44,6 +44,16 @@ export default [
     },
   },
 
+  {
+    files: ['server/**/*.{ts,cts,mts}'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+  },
+
   eslintConfigPrettier,
 
   {
