@@ -49,4 +49,3 @@ function isUserProfile(value: unknown): value is UserProfile {
     typeof record.avatar === 'string'
   )
 }
-

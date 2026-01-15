@@ -4,4 +4,3 @@
     <p>Placeholder screen for /checkout.</p>
   </main>
 </template>
-

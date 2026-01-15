@@ -4,4 +4,3 @@
     <p>Placeholder screen for /cart.</p>
   </main>
 </template>
-

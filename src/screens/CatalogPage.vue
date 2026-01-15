@@ -4,4 +4,3 @@
     <p>Placeholder screen for /catalog.</p>
   </main>
 </template>
-
