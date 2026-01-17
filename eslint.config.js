@@ -59,6 +59,12 @@ export default [
   {
     files: ['**/*.ts', '**/*.vue'],
     languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        fetch: 'readonly',
+      },
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',

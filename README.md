@@ -1,5 +1,99 @@
-# Vue 3 + TypeScript + Vite
+## Тестовое задание: SPA-магазин на моках + WebSocket (Vue 3 + Vite)
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Небольшой SPA-магазин на мок-данных с мок-REST API и WebSocket-событиями (изменение цены/наличия и синхронизация корзины).
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## Запуск
+
+### Через pnpm
+
+Терминал 1:
+
+```bash
+pnpm dev:mock
+```
+
+Терминал 2 (например, через tmux):
+
+```bash
+pnpm dev
+```
+
+Откройте `http://localhost:5173`.
+
+### Через Docker
+
+```bash
+docker compose up --build
+```
+
+Откройте `http://localhost:5173`.
+
+## Архитектура
+
+- Backend-моки (in-memory)
+  - `server/state.ts` - единое in-memory состояние (товары + корзина) и доменные хелперы
+  - `server/restApp.ts` - REST-пути `/api/*` + injection задержек/ошибок для проверки отката оптимистичных апдейтов
+  - `server/wsApp.ts` - WS-сервер: симуляции + рассылка `product.updated`/`cart.synced`.
+  - `server/mock.ts` - общий entrypoint (REST+WS в одном процессе)
+
+- Frontend (SPA)
+  - `src/router/index.ts` - маршруты и auth-guard (редиректы /login -> /catalog).
+  - `src/stores/*` - Pinia stores:
+    - `auth` — мок-сессия (token/user) + persistence.
+    - `catalog` / `productDetails` - загрузка и хранение данных каталога/карточки.
+    - `cart` - оптимистичные add/update/remove + rollback; алерты на изменение цены/наличия.
+    - `realtime` - один WS-клиент на приложение; применяет события к соответствующим store (каталог/карточка/корзина) предсказуемым образом
+  - `src/shared/api/*` - типизированные запросы, `ApiError`, общий формат ошибок, проксирование `/api` на мок-сервер через `vite.config.ts`.
+  - `src/shared/ws/*` - WS-клиент с reconnect/backoff и типами событий
+  - `src/shared/notifications/*` — toasts/уведомления для WS и действий пользователя
+
+- Стили
+  - TailwindCSS + минимальный набор общих utility-классов в `src/style.css` (кнопки/карточки/формы).
+
+- Тесты
+  - Unit (Vitest) - фокус на store/бизнес-логике.
+  - E2E (Playwright) - базовый флоу + детерминированные WS-сценарии, порты поднимаются раннером `scripts/e2e-run.ts`, селекторы через `data-testid`
+
+## Реализовано по ТЗ
+
+- Мок-аутентификация: логин/логаут, редиректы, сохранение сессии.
+- Каталог: фильтры/сортировка/пагинация, синхронизация query-параметров с URL, лоадеры/ошибки/пустые состояния.
+- Карточка товара: полные данные, живые обновления (WS) цены/наличия.
+- Корзина: оптимистичные апдейты (add/update/remove) с откатом при ошибках, подсветка и подтверждение при изменении цены/наличия по WS.
+- Оформление: форма (имя/комментарий), успешное оформление с номером заказа, очистка корзины, обработка `CART_OUTDATED`.
+- WebSocket: reconnect/backoff, события `product.updated` и `cart.synced` (показывается нотификация «Корзина обновлена»).
+- Accessibility: aria-лейблы для ключевых кнопок/полей.
+
+## Скрипты
+
+- `pnpm test` - unit-тесты.
+- `pnpm test:e2e` - e2e.
+- `pnpm e2e:install` - установить браузер для Playwright
+- `pnpm lint`- линт (автофикс: `pnpm lint:fix`)
+- `pnpm format` - Форматирование (проверка: `pnpm format:check`).
+- `pnpm build` - typecheck + production build.
+
+## Деплой
+
+Деплой сделать не успел.
+
+Если бы делал — развернул бы на **Fly.io** (через Docker): отдельный процесс для мок-REST+WS (`server/mock.ts`) и статику фронтенда (собранный `dist`) с проксированием `/api` и WebSocket на мок-сервис.
+
+## Сколько времени ушло
+
+10 часов
+
+## Сложности
+
+- Стабилизация e2e: установка браузера Playwright локально и запуск dev+mock на случайных портах без конфликтов.
+- Детализация WS-реакций (подсветка/подтверждения) так, чтобы поведение было предсказуемым и покрывалось тестами.
+
+## Что бы улучшил при большем времени
+
+- Денежное форматирование (Intl.NumberFormat) и единый компонент цены/валюты.
+- Более детальная обработка ошибок (тексты по кодам, ретраи/офлайн-режим).
+- Более полные e2e сценарии (ошибки мок-API, `cart.synced`, `CART_OUTDATED`).
+- Компонентные тесты для ключевых экранов (Vue Testing Library) или контрактные тесты API payloads.
+- Более строгая типизация и валидация данных на edge (zod/valibot) для устойчивости моков.
+- Полировка UX: фокус-стейты, клавиатурная навигация, лучшее форматирование чисел/инпутов.
+- Деплой на Fly.io + конфигурация окружений (hosts/ports)

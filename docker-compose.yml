@@ -1,0 +1,32 @@
+services:
+  mock:
+    build:
+      context: .
+      dockerfile: Dockerfile.mock
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+    environment:
+      REST_PORT: '3000'
+      WS_PORT: '3001'
+      REST_HOST: '0.0.0.0'
+      WS_HOST: '0.0.0.0'
+      MOCK_API_DELAY_MS_MIN: '50'
+      MOCK_API_DELAY_MS_MAX: '300'
+      MOCK_API_FAIL_RATE: '0'
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5173:5173'
+    environment:
+      VITE_API_BASE_URL: '/api'
+      VITE_WS_URL: 'ws://localhost:3001'
+      VITE_PROXY_TARGET: 'http://mock:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - mock
