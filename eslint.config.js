@@ -44,11 +44,27 @@ export default [
     },
   },
 
+  {
+    files: ['server/**/*.{ts,cts,mts}'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+  },
+
   eslintConfigPrettier,
 
   {
     files: ['**/*.ts', '**/*.vue'],
     languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        fetch: 'readonly',
+      },
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',

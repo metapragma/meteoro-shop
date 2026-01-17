@@ -6,8 +6,9 @@ const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 
-function handleLogin() {
-  auth.loginMock()
+async function handleLogin() {
+  const ok = await auth.login('User', '/avatars/u1.png')
+  if (!ok) return
 
   const next =
     typeof route.query.next === 'string' && route.query.next.length > 0
@@ -24,26 +25,35 @@ function handleLogout() {
 </script>
 
 <template>
-  <main class="mx-auto max-w-md p-6">
-    <h1 class="text-2xl font-semibold">Вход</h1>
-    <p class="mt-2 text-sm text-slate-600">Мок-аутентификация.</p>
-    <div class="mt-4 flex gap-3">
-      <button
-        type="button"
-        aria-label="Войти"
-        class="rounded bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
-        @click="handleLogin"
-      >
-        Войти
-      </button>
-      <button
-        type="button"
-        aria-label="Выйти"
-        class="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-100"
-        @click="handleLogout"
-      >
-        Выйти
-      </button>
+  <section class="mx-auto max-w-md px-4 py-10 sm:py-14">
+    <div class="card card-pad">
+      <h1 class="text-2xl font-semibold tracking-tight">Вход</h1>
+      <p class="muted mt-2">Мок-аутентификация.</p>
+
+      <p v-if="auth.errorMessage" class="mt-3 text-sm text-red-700">
+        {{ auth.errorMessage }}
+      </p>
+
+      <div class="mt-5 flex flex-col gap-2 sm:flex-row">
+        <button
+          type="button"
+          aria-label="Войти"
+          class="btn btn-primary w-full sm:w-auto"
+          :disabled="auth.isLoading"
+          @click="handleLogin"
+        >
+          Войти
+        </button>
+        <button
+          type="button"
+          aria-label="Выйти"
+          class="btn btn-secondary w-full sm:w-auto"
+          :disabled="auth.isLoading"
+          @click="handleLogout"
+        >
+          Выйти
+        </button>
+      </div>
     </div>
-  </main>
+  </section>
 </template>

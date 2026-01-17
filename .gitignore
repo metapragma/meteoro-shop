@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 package-lock.json
+playwright-report
+test-results
+coverage
 
 # Editor directories and files
 .vscode/*

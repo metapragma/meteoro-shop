@@ -2,4 +2,7 @@ dist
 node_modules
 .pnpm-store
 pnpm-lock.yaml
+playwright-report
+test-results
+coverage
 Тестовое задание (FrontEnd, Vue.js или React).md
